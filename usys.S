@@ -7,9 +7,10 @@
     movl $SYS_ ## name, %eax; \
     int $T_SYSCALL; \
     ret
-
+//tesstting
 SYSCALL(fork)
 SYSCALL(exit)
+SYSCALL(exitS)
 SYSCALL(wait)
 SYSCALL(pipe)
 SYSCALL(read)

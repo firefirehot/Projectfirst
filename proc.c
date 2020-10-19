@@ -6,7 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
-//test
+
 struct {
   struct spinlock lock;
   struct proc proc[NPROC];
@@ -234,7 +234,7 @@ exit(void)
   if(curproc == initproc)
     panic("init exiting");
 
-  // Close all open files.
+  /* Close all open files. */
   for(fd = 0; fd < NOFILE; fd++){
     if(curproc->ofile[fd]){
       fileclose(curproc->ofile[fd]);
@@ -249,10 +249,10 @@ exit(void)
 
   acquire(&ptable.lock);
 
-  // Parent might be sleeping in wait().
+  /* Parent might be sleeping in wait().*/
   wakeup1(curproc->parent);
 
-  // Pass abandoned children to init.
+  /* Pass abandoned children to init.*/
   for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
     if(p->parent == curproc){
       p->parent = initproc;
@@ -261,8 +261,52 @@ exit(void)
     }
   }
 
-  // Jump into the scheduler, never to return.
+  /* Jump into the scheduler, never to return.*/
   curproc->state = ZOMBIE;
+  sched();
+  panic("zombie exit");
+}
+
+void
+exitS(int passedExitStat)
+{
+  struct proc *curproc = myproc();
+  struct proc *p;
+  int fd;
+
+  if(curproc == initproc)
+    panic("init exiting");
+
+  /* Close all open files. */
+  for(fd = 0; fd < NOFILE; fd++){
+    if(curproc->ofile[fd]){
+      fileclose(curproc->ofile[fd]);
+      curproc->ofile[fd] = 0;
+    }
+  }
+
+  begin_op();
+  iput(curproc->cwd);
+  end_op();
+  curproc->cwd = 0;
+
+  acquire(&ptable.lock);
+
+  /* Parent might be sleeping in wait().*/
+  wakeup1(curproc->parent);
+
+  /* Pass abandoned children to init.*/
+  for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+    if(p->parent == curproc){
+      p->parent = initproc;
+      if(p->state == ZOMBIE)
+        wakeup1(initproc);
+    }
+  }
+
+  /* Jump into the scheduler, never to return.*/
+  curproc->state = ZOMBIE;
+  curproc->exitStat = passedExitStat;
   sched();
   panic("zombie exit");
 }
@@ -270,7 +314,7 @@ exit(void)
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
 int
-wait(void)
+wait(int)
 {
   struct proc *p;
   int havekids, pid;

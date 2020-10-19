@@ -21,9 +21,23 @@ sys_exit(void)
 }
 
 int
-sys_wait(void)
+sys_exitS(void)
 {
-  return wait();
+  int pid;
+  if(argint(0,&pid) < 0) 
+     return -1;
+  	
+  exitS(pid);
+  return 0;  // needs fixing
+}
+
+int
+sys_wait(int)
+{
+ int pid;
+  if(argint(0,&pid) < 0)
+     return -1;
+  return wait(pid);
 }
 
 int
