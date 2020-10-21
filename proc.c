@@ -340,6 +340,7 @@ wait(int * waitStatus)
         p->killed = 0;
         p->state = UNUSED;
         release(&ptable.lock);
+	if(waitStatus != NULL)
 	waitStatus = &p->exitStat;
         return pid;
       }
