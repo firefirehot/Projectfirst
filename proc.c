@@ -314,7 +314,7 @@ exitS(int passedExitStat)
 // Wait for a child process to exit and return its pid.
 // Return -1 if this process has no children.
 int
-wait(int)
+wait(int * waitStatus)
 {
   struct proc *p;
   int havekids, pid;
@@ -340,6 +340,7 @@ wait(int)
         p->killed = 0;
         p->state = UNUSED;
         release(&ptable.lock);
+	waitStatus = &p->exitStat;
         return pid;
       }
     }
