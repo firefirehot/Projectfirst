@@ -43,8 +43,8 @@ int exitWait(void)
         }
         else if (pid > 0)
         {
+	printf(1,"\n This is the exit_status number befor wait %d \n",exit_status);
  ret_pid = wait(&exit_status);
-            printf(1, "\n This is the parent: child with PID# %d has exited with status %d\n", ret_pid, exit_status);
         }
         else
  {

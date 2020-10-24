@@ -34,10 +34,10 @@ sys_exitS(void)
 int
 sys_wait(void)
 {
- int pid;
-  if(argint(0,&pid) < 0)
+ int *pid;
+  if(argptr(0,(void*)&pid,sizeof(*pid)) < 0)
      return -1;
-  return wait(&pid);
+  return wait(pid);
 }
 
 int
