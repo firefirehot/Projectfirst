@@ -41,6 +41,20 @@ sys_wait(void)
 }
 
 int
+sys_waitpid(void)
+{
+ int pid;
+ int *waitStatus;
+ int option;
+ // get the adress of pid
+ argint(0,&pid); 
+ //put in ptr of waitStatus
+ if(argptr(1,(void*)&waitStatus,sizeof(*waitStatus)) <0)
+   return -1;
+ argint(2,&option);
+ return waitpid(pid,waitStatus,option);
+}
+int
 sys_kill(void)
 {
   int pid;
