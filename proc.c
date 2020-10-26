@@ -373,7 +373,7 @@ waitpid(int pid, int * waitStatus, int options)
       havekids = 1;
       if(p->pid == pid){
         /*Found one.*/
-        return p->waitStat;
+        return p->exitStat;
       }
     }
      /*No point waiting if we don't have any children.*/
