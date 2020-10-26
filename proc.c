@@ -373,6 +373,7 @@ waitpid(int pid, int * waitStatus, int options)
       havekids = 1;
       if(p->pid == pid){
         /*Found one.*/
+	release(&ptable.lock);
         return p->exitStat;
       }
     }
@@ -381,6 +382,7 @@ waitpid(int pid, int * waitStatus, int options)
       release(&ptable.lock);
       return -1;
     }
+	release(&ptable.lock);
         return 0;
   }
 else
