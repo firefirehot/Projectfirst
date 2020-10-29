@@ -32,14 +32,28 @@ sys_exitS(void)
 }
 
 int
-sys_wait(int)
+sys_wait(void)
 {
- int pid;
-  if(argint(0,&pid) < 0)
+ int *pid;
+  if(argptr(0,(void*)&pid,sizeof(*pid)) < 0)
      return -1;
   return wait(pid);
 }
 
+int
+sys_waitpid(void)
+{
+ int pid;
+ int *waitStatus;
+ int option;
+ // get the adress of pid
+ argint(0,&pid); 
+ //put in ptr of waitStatus
+ if(argptr(1,(void*)&waitStatus,sizeof(*waitStatus)) <0)
+   return -1;
+ argint(2,&option);
+ return waitpid(pid,waitStatus,option);
+}
 int
 sys_kill(void)
 {
